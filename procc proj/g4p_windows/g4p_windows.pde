@@ -1,4 +1,4 @@
-import g4p_controls.*;
+/*import g4p_controls.*;
 GWindow Screen;
 
 void setup() {
@@ -18,4 +18,4 @@ public void windowDraw(PApplet app, GWinData data) {
   app.strokeWeight(2);
   app.stroke(0);
   app.line(app.width / 2, app.height/2, app.mouseX, app.mouseY);
-}
+}*/
