@@ -12,74 +12,67 @@ import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import g4p_controls.*;
 
 public class d3 extends PApplet {
 
-Table table;
-int n=3000000;
-float [][][] xx = new float[n][5][4];
-float [][][] xd = new float[n][5][4];
-//float [][][] xd = new float[n][5][4];
-int ee=0;
-int ee1;
-int k,k1;
- public void setup() {
-   /* size commented out by preprocessor */;
-  table = loadTable("data.csv", "header");
-k1=0;
-k=0;
-  println(table.getRowCount() + " total rows in table");
 
-  for (TableRow row : table.rows()) {
+  GWindow Screen;
+  Table table;
+  int n=3000000;
+  float [][][] xx = new float[n][5][4];
+  float [][][] xd = new float[n][5][4];
+  //float [][][] xd = new float[n][5][4];
+  int ee=0;
+  int ee1;
+  int k, k1;
+  public void setup() {
+    /* size commented out by preprocessor ;*/
+    table = loadTable("data.csv", "header");
+    k1=0;
+    k=0;
+    Screen =  GWindow.getWindow(this, "Fullscreen", 100, 50, 900, 900, P3D);
+    Screen.addDrawHandler(this, "windowDraw");
+    // println(table.getRowCount() + " total rows in table");
 
-   ee = row.getInt(0);   
+    for (TableRow row : table.rows()) {
 
-    k1=k1+1;
+      ee = row.getInt(0);
 
-    xx[k1][0][0] = row.getFloat(1)*0.03f;
-     xx[k1][1][0] = row.getFloat(2)*0.03f;
-     xx[k1][2][0] = row.getFloat(3)*0.03f;
+      k1=k1+1;
+
+      xx[k1][0][0] = row.getFloat(1)*0.03f;
+      xx[k1][1][0] = row.getFloat(2)*0.03f;
+      xx[k1][2][0] = row.getFloat(3)*0.03f;
       xx[k1][3][0] = row.getFloat(4)*0.03f;
-     
-    xx[k1][0][1] = row.getFloat(5)*0.03f;
-     xx[k1][1][1] = row.getFloat(6)*0.03f;
-     xx[k1][2][1] = row.getFloat(7)*0.03f;
+
+      xx[k1][0][1] = row.getFloat(5)*0.03f;
+      xx[k1][1][1] = row.getFloat(6)*0.03f;
+      xx[k1][2][1] = row.getFloat(7)*0.03f;
       xx[k1][3][1] = row.getFloat(8)*0.03f;
-    
-     xx[k1][0][2] = row.getFloat(9)*0.03f;
-     xx[k1][1][2] = row.getFloat(10)*0.03f;
-     xx[k1][2][2] = row.getFloat(11)*0.03f;
+
+      xx[k1][0][2] = row.getFloat(9)*0.03f;
+      xx[k1][1][2] = row.getFloat(10)*0.03f;
+      xx[k1][2][2] = row.getFloat(11)*0.03f;
       xx[k1][3][2] = row.getFloat(12)*0.03f;
-      
-     xd[k1][0][0] = row.getFloat(13)*0.002f;
-     xd[k1][0][1] = row.getFloat(17)*0.002f;
-     xd[k1][0][2] = row.getFloat(21)*0.002f;
 
+      xd[k1][0][0] = row.getFloat(13)*0.002f;
+      xd[k1][0][1] = row.getFloat(17)*0.002f;
+      xd[k1][0][2] = row.getFloat(21)*0.002f;
+    }
+    println(k1);
   }
- println(k1);
- 
-}
 
 
- public void draw(){
-  
-  background(0);
-  translate(width/2, height*0.8f);
-  rotateX(PI/2);
-    rotateZ(PI/4);
-  if (mousePressed){
-}
- fill(255);
-   stroke(255);
-  for (int i = 0; i < n; i++) {
-point(xx[i][0][0]+xd[i][0][0]*PApplet.parseFloat(mouseX-width/2) ,xx[i][0][1]+xd[i][0][1]*PApplet.parseFloat(mouseX-width/2) , xx[i][0][2]+xd[i][0][2]*PApplet.parseFloat(mouseX-width/2));
+  public void draw() {
+
     
-}
-
-}
+  }
 
 
-  public void settings() { size(900, 900, P3D); }
+  public void settings() {
+    size(900, 900, P3D);
+  }
 
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "d3" };
@@ -87,6 +80,21 @@ point(xx[i][0][0]+xd[i][0][0]*PApplet.parseFloat(mouseX-width/2) ,xx[i][0][1]+xd
       PApplet.main(concat(appletArgs, passedArgs));
     } else {
       PApplet.main(appletArgs);
+    }
+  }
+
+
+  public void windowDraw(PApplet app, GWinData data) {
+    app.background(0);
+   app.translate(width/2, height*0.8f);
+    app.rotateX(PI/2);
+    app.rotateZ(PI/4);
+    if (mousePressed) {
+    }
+    app.fill(255);
+    app.stroke(255);
+    for (int i = 0; i < n; i++) {
+      app.point(xx[i][0][0]+xd[i][0][0]*app.parseFloat(mouseX-width/2), xx[i][0][1]+xd[i][0][1]*app.parseFloat(mouseX-width/2), xx[i][0][2]+xd[i][0][2]*app.parseFloat(mouseX-width/2));
     }
   }
 }
