@@ -1,22 +1,26 @@
-import g4p_controls.*;
+import g4p_controls.GWinData;
+import g4p_controls.GWinData;
+import g4p_controls.GWinData;
+import g4p_controls.GWindow;
+import g4p_controls;
 GWindow Screen;
 
 Table table;
 int n=3000000;
 float [][][] xx = new float[n][5][4];
 float [][][] xd = new float[n][5][4];
-
+PVector Pos_of_main;
 int ee=0;
 int ee1;
 int k, k1;
+
+
 void setup() {
   size(900, 900, P3D);
-  
   table = loadTable("data.csv", "header");
   Screen =  GWindow.getWindow(this, "Fullscreen", 100, 50, 480, 320, P3D);
   Screen.addDrawHandler(this, "windowDraw");
-  
-  
+  Screen.getPosition(Pos_of_main);
   k1=0;
   k=0;
   //println(table.getRowCount() + " total rows in table");
@@ -51,19 +55,15 @@ void setup() {
 
 
 void draw() {
-
   background(0);
   translate(width/2, height*0.8);
   rotateX(PI/2);
   rotateZ(PI/4);
   if (mousePressed) {
   }
-
   fill(255);
   stroke(255);
   for (int i = 0; i < n; i++) {
-
-
     point(xx[i][0][0]+xd[i][0][0]*float(mouseX-width/2), xx[i][0][1]+xd[i][0][1]*float(mouseX-width/2), xx[i][0][2]+xd[i][0][2]*float(mouseX-width/2));
   }
 }

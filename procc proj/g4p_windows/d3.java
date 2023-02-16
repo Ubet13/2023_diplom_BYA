@@ -3,7 +3,7 @@ import processing.core.*;
 import processing.data.*;
 import processing.event.*;
 import processing.opengl.*;
-
+import processing.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.File;
@@ -12,12 +12,17 @@ import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import g4p_controls.GWindow;
 import g4p_controls.*;
+
+
+
+
 
 public class d3 extends PApplet {
 
-
-  GWindow Screen;
+  PVector Pos_of_main;
+  GWindow Screen_model;
   Table table;
   int n=3000000;
   float [][][] xx = new float[n][5][4];
@@ -26,13 +31,22 @@ public class d3 extends PApplet {
   int ee=0;
   int ee1;
   int k, k1;
+  int x, y;
+  float e;
+
   public void setup() {
     /* size commented out by preprocessor ;*/
+    smooth(3);
     table = loadTable("data.csv", "header");
     k1=0;
     k=0;
-    Screen =  GWindow.getWindow(this, "Fullscreen", 100, 50, 900, 900, P3D);
-    Screen.addDrawHandler(this, "windowDraw");
+
+    //Screen_model =  GWindow.getWindow(this, "Model", 100, 50, 900, 900, P3D);
+    //Screen_model.addDrawHandler(this, "windowDraw");
+    //Screen_model.getPosition(Pos_of_main);
+    //x = parseInt(Pos_of_main.x);
+    //y = parseInt(Pos_of_main.y);
+    //Screen_model.setLocation(x, y);
     // println(table.getRowCount() + " total rows in table");
 
     for (TableRow row : table.rows()) {
@@ -65,36 +79,46 @@ public class d3 extends PApplet {
 
 
   public void draw() {
-
-    
+    background(0);
+    translate(width/2, height*0.8f);
+    rotateX(PI/2);
+    rotateZ(PI/4);
+    fill(255);
+    stroke(255);
+    for (int i = 0; i < n; i++) {
+      point(xx[i][0][0]+xd[i][0][0]*parseFloat(mouseX-width/2), xx[i][0][1]+xd[i][0][1]*parseFloat(mouseX-width/2), xx[i][0][2]+xd[i][0][2]*parseFloat(mouseX-width/2));
+    }
   }
 
 
   public void settings() {
-    size(900, 900, P3D);
+    size(displayWidth, displayHeight, P3D);
   }
+
+
 
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "d3" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
-    } else {
+    } else
+    {
       PApplet.main(appletArgs);
     }
   }
 
-
-  public void windowDraw(PApplet app, GWinData data) {
-    app.background(0);
-   app.translate(width/2, height*0.8f);
-    app.rotateX(PI/2);
-    app.rotateZ(PI/4);
-    if (mousePressed) {
-    }
-    app.fill(255);
-    app.stroke(255);
-    for (int i = 0; i < n; i++) {
-      app.point(xx[i][0][0]+xd[i][0][0]*app.parseFloat(mouseX-width/2), xx[i][0][1]+xd[i][0][1]*app.parseFloat(mouseX-width/2), xx[i][0][2]+xd[i][0][2]*app.parseFloat(mouseX-width/2));
-    }
-  }
+  //  public void windowDraw(PApplet app, GWinData data) {
+  //    app.background(0);
+  //    app.translate(width/2, height*0.8f);
+  //    app.rotateX(PI/2);
+  //    app.rotateZ(PI/4);
+  //    if (mousePressed) {
+  //    }
+  //    app.fill(255);
+  //    app.stroke(255);
+  //    for (int i = 0; i < n; i++) {
+  //      app.point(xx[i][0][0]+xd[i][0][0]*app.parseFloat(mouseX-width/2), xx[i][0][1]+xd[i][0][1]*app.parseFloat(mouseX-width/2), xx[i][0][2]+xd[i][0][2]*app.parseFloat(mouseX-width/2));
+  //    }
+  //  }
+  //}
 }
