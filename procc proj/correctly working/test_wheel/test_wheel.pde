@@ -10,7 +10,7 @@ import g4p_controls.*;
 
 
 
-//GButton btnMakeWindow;
+GButton btnMakeWindow;
 
 
 
@@ -18,34 +18,71 @@ import g4p_controls.*;
 
 float  wheel;
 PVector Pos_of_main;
-Table table;
+Table table, tableE;
 int n=3000000;
 float [][][] xx = new float[n][5][4];
 float [][][] xd = new float[n][5][4];
 //float [][][] xd = new float[n][5][4];
 int ee=0;
 int ee1;
-int k, k1;
+int k, k1, k2;
 int x, y;
+int n2=100;
+int nF=100;
+int[][] F = new int[nF][nF];
+
+//float   min1=0;
+//float   min2=0;
+//float Sc=0.8;
+//float max1=0;
+//float max2=0;
+float[][] xg = new float[n2+10][6];
 float e, coef;
 float [][][] constr=new float[n][5][4];
 float displayWidth_rect_1;
 float displayWidth_rect_2;
 float displayHeight_rect_1;
 float displayHeight_rect_2;
+float xc, yc, zc, dx, dy, dz, r1, r2, r3, xb1, xb2, xb3, yb1, yb2, yb3, rb, s;
+
+
+
+PImage lin, cur, cir, back, b1, b2;
+
+float Sc=0.8;
+float max1=0;
+float max2=0;
+
+float   min1=0;
+float   min2=0;
+
+float Scd=200;
+boolean state_C=false;
+boolean state_b1=true;
+boolean state_b2=false;
+boolean state_b3=false;
+int imax1=0;
+int imax2=0;
+int Fpr1, Fpr2;
 
 
 void settings() {
   size(displayWidth, displayHeight, P3D);
-  smooth(3);
+
   table = loadTable("data.csv", "header");
+  tableE = loadTable("wind1e.csv", "header");
   k1=0;
   k=0;
-  //displayWidth_rect_1=displayWidth*4/16;
-  //displayWidth_rect_2=displayWidth;
-  //displayHeight_rect_1=displayHeight;
-  //displayHeight_rect_2=displayHeight*2/16;
-  for (TableRow row : table.rows()) {
+  xc=0;
+  yc=0;
+  zc=0;
+  displayWidth_rect_1=displayWidth*4/16;
+  displayWidth_rect_2=displayWidth;
+  displayHeight_rect_1=displayHeight;
+  displayHeight_rect_2=displayHeight*2/16;
+
+  println(displayWidth, displayHeight);
+  for (TableRow row : table.rows()) {  // загрузка координат в массив
     ee = row.getInt(0);
     k1=k1+1;
     xx[k1][0][0] = row.getFloat(1)*0.03f;
@@ -73,47 +110,253 @@ public void setup() {
   surface.setResizable(true);
   surface.setLocation(100, 100);
   coef=1;
-  //btnMakeWindow = new GButton(this, 10, 20, 140, 20, "Make Window");
+  btnMakeWindow = new GButton(this, 10, 20, 140, 20, "Make Window");
+  lin = loadImage("lin2.png");
+  cur = loadImage("cur.png");
+  cir = loadImage("s2.png");
+  b1 = loadImage("b1.png");
+  b2 = loadImage("b2.png");
+  back = loadImage("back2.png");
+  back.resize(int(displayWidth_rect_2), int(displayHeight_rect_1));
 
+  //imageMode(CENTER);
+  //rectMode(CENTER);
+  xb1=displayWidth*0.7;
+  yb1=displayHeight*0.15;
+  xb2=displayWidth*0.8;
+  yb2=displayHeight*0.15;
+  xb3=displayWidth*0.9;
+  yb3=displayHeight*0.15;
+  rb=displayHeight*0.15;
 }
 
 
 
 public void draw() {
-  background(0);
+
+  background(125);
+
+
+
   rect(0, 0, displayWidth_rect_1, displayHeight_rect_1);
   fill(255);
   rect(0, 0, displayWidth_rect_2, displayHeight_rect_2);
   fill(255);
-  
+
+
 
   translate(width*5/8, height*0.85);
   rotateX(PI/2);
   rotateZ(PI/4);
-  
+
+
+  //rectMode(CENTER);
+  //fill(125);
+  //rect(0, 0, displayWidth*10, displayWidth);
+
+
   if (wheel==1) {
     coef=coef-0.02;
   }
   if (wheel==-1) {
     coef=coef+0.02;
   }
-  
+
   fill(255);
   stroke(255);
   thread("requestData1");
   thread("requestData2");
   thread("requestData3");
   thread("requestData4");
-  for (int i = 0; i < n; i++) {
-    point(constr[i][0][0]*coef, constr[i][0][1]*coef, constr[i][0][2]*coef);
-  }
+
+  //for (int i = 0; i < n; i++) {
+  //  point(constr[i][0][0]*coef, constr[i][0][1]*coef, constr[i][0][2]*coef);
+  //}
+
+
+
+
   //  thread("requestData2");
   //thread("requestData3");
   //void requestData1() {
   //   for (int i = 0; i < n; i++) {
   //     point((xx[i][0][0]+xd[i][0][0]*parseFloat(mouseX-width/2))*coef, (xx[i][0][1]+xd[i][0][1]*parseFloat(mouseX-width/2))*coef, (xx[i][0][2]+xd[i][0][2]*parseFloat(mouseX-width/2))*coef);
   //   }
+
+
+  state_b1=true;
+  state_b2=false;
+  state_b3=false;
+
+
+  r1=sqrt(sq(mouseX-xb1)+sq(mouseY-yb1));
+  r2=sqrt(sq(mouseX-xb2)+sq(mouseY-yb2));
+  r3=sqrt(sq(mouseX-xb3)+sq(mouseY-yb3));
+
+
+  //if (mousePressed&&(r1<rb)) {
+  //  state_b1=true;
+  //  state_b2=false;
+  //  state_b3=false;
+  //} else {
+  //  //    state_b1=false;
+  //}
+  //if (mousePressed&&(r2<rb)) {
+  //  state_b2=true;
+  //  state_b1=false;
+  //  state_b3=false;
+  //} else {
+  //  //   state_b2=false;
+  //}
+
+  //if (mousePressed&&(r3<rb)) {
+  //  state_b3=true;
+  //  state_b2=false;
+  //  state_b1=false;
+  //} else {
+  //  //    state_b3=false;
+  //}
+
+
+  if (state_b1) {//режим отображения напряженного состояния
+    for (int i = 0; i < k1; i++) {
+      if (mouseX<width*0.5) {
+        dx=xx[i][1][0]*Scd*(mouseX-displayWidth*0.25)/displayWidth+xx[i][1][1]*Scd*(mouseY-displayWidth*0.25)/displayWidth;
+        dy=xx[i][2][0]*Scd*(mouseX-displayWidth*0.25)/displayWidth+xx[i][2][1]*Scd*(mouseY-displayWidth*0.25)/displayWidth;
+        dz=xx[i][3][0]*Scd*(mouseX-displayWidth*0.25)/displayWidth+xx[i][3][1]*Scd*(mouseY-displayWidth*0.25)/displayWidth;
+        //println(dx,dy,dz);
+      }
+      stroke(100+dx*8, 100+dy*8, 100+dz*8, 50);
+      //println(dx,dy,dz);
+      point(constr[i][0][0]*coef, constr[i][0][1]*coef, constr[i][0][2]*coef);
+    }
+  }
+  //  if (state_b2) {
+  //    for (int i = 0; i < k2; i++) {
+  //      if (mouseX<width*0.5) {
+
+  //        s=xd[i][4]*Scd*abs(mouseX-width*0.25)/width+xd[i][5]*Scd*abs(mouseY-width*0.25)/width;
+  //        //  println(s);
+  //      }
+  //      stroke(s*1, xd[i][4]*Scd*abs(mouseX-width*0.25)/width, xd[i][5]*Scd*abs(mouseY-width*0.25)/width, 50);
+  //      point(xd[i][1]*Sc, xd[i][2]*Sc, xd[i][3]*Sc*0.3);
+  //    }
+  //  }
+  //  float s1, s2;
+  //  float s1m=10;
+  //  float s2m=20;
+  //  if (state_b3) {
+  //    for (int i = 0; i < k2; i++) {
+
+
+  //      if (state_C) {
+
+  //        s1=xd[i][4]*Scd*abs(max1)/width+xd[i][5]*Scd*abs(max2)/width;
+  //        s2=xd[i][4]*Scd*abs(min1)/width+xd[i][5]*Scd*abs(min2)/width;
+
+  //        s=(s1-s2)+(s1+s2)*0.5*0.06;
+  //        //   println(s);
+  //        if (s<s1m) {
+  //          xd[i][6]++;
+  //        } else {
+
+  //          if (s<s2m) {
+  //            xd[i][7]++;
+  //          } else {
+  //            xd[i][8]++;
+  //          }
+  //        }
+  //      }
+
+  //      if (mouseX<width*0.5) {
+
+  //        s=xd[i][4]*Scd*abs(mouseX-width*0.25)/width+xd[i][5]*Scd*abs(mouseY-width*0.25)/width;
+  //        //  println(s);
+  //      }
+  //      stroke(xd[i][6]*10, xd[i][7]*10, xd[i][8]*10, 50);
+  //      point(xd[i][1]*Sc, xd[i][2]*Sc, xd[i][3]*Sc*0.3);
+  //    }
+  //  }
+
+  //  xg[0][0]=(mouseX-width*0.25);
+  //  xg[0][1]=(mouseY-width*0.25);
+
+
+  //  max1=-1e6;
+  //  max2=-1e6;
+
+  //  min1=1e6;
+  //  min2=1e6;
+
+
+  //  for (int i=1; i<n2/10; i++) {
+
+  //    if (xg[i][0]>max1) {
+  //      max1=xg[i][0];
+  //      imax1=i;
+  //    }
+
+  //    if (xg[i][1]>max2) {
+  //      max2=xg[i][1];
+  //      imax2=i;
+  //    }
+
+  //    if (xg[i][0]<min1) {
+  //      min1=xg[i][0];
+  //    }
+  //    if (xg[i][1]<min2) {
+  //      min2=xg[i][1];
+  //    }
+  //  }
+  //  state_C=false;
+  //  if (imax1==floor(n2/20)) {
+  //    state_C=true;
+  //    Fpr1=int(max1-min1)*2*nF/width;
+  //    Fpr2=int(max2-min2)*2*nF/width;
+
+
+  //    if (Fpr1>(nF-1)) {
+  //      Fpr1=nF-1;
+  //    }
+  //    if (Fpr2>(nF-1)) {
+  //      Fpr2=nF-1;
+  //    }
+  //    F[Fpr1][Fpr2]++;
+  //  }
+  //  if (imax2==floor(n2/20)) {
+  //    state_C=true;
+  //    Fpr1=int(max1-min1)*2*nF/width;
+  //    Fpr2=int(max2-min2)*2*nF/width;
+  //    if (Fpr1>(nF-1)) {
+  //      Fpr1=nF-1;
+  //    }
+  //    if (Fpr2>(nF-1)) {
+  //      Fpr2=nF-1;
+  //    }
+  //    F[Fpr1][Fpr2]++;
+  //  }
+  //}
+  wheel=0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 public void mouseWheel(MouseEvent event) {
   float e = event.getCount();
   println(e);
