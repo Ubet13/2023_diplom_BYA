@@ -85,24 +85,31 @@ void settings() {
   for (TableRow row : table.rows()) {  // загрузка координат в массив
     ee = row.getInt(0);
     k1=k1+1;
-    xx[k1][0][0] = row.getFloat(1)*0.03f;
-    xx[k1][1][0] = row.getFloat(2)*0.03f;
-    xx[k1][2][0] = row.getFloat(3)*0.03f;
-    xx[k1][3][0] = row.getFloat(4)*0.03f;
 
-    xx[k1][0][1] = row.getFloat(5)*0.03f;
-    xx[k1][1][1] = row.getFloat(6)*0.03f;
-    xx[k1][2][1] = row.getFloat(7)*0.03f;
-    xx[k1][3][1] = row.getFloat(8)*0.03f;
 
-    xx[k1][0][2] = row.getFloat(9)*0.03f;
-    xx[k1][1][2] = row.getFloat(10)*0.03f;
-    xx[k1][2][2] = row.getFloat(11)*0.03f;
-    xx[k1][3][2] = row.getFloat(12)*0.03f;
 
-    xd[k1][0][0] = row.getFloat(13)*0.002f;
-    xd[k1][0][1] = row.getFloat(17)*0.002f;
-    xd[k1][0][2] = row.getFloat(21)*0.002f;
+
+
+
+    xx[k1][0][0] = row.getFloat(1)*0.03f;// координата X
+    xx[k1][1][0] = row.getFloat(5)*0.03f;// координата Y
+    xx[k1][2][0] = row.getFloat(9)*0.03f;// координата Z
+
+    xx[k1][0][1] = row.getFloat(2)*0.03f;// компоненты вектора перемещений при действии нагружения 1 X
+    xx[k1][1][1] = row.getFloat(6)*0.03f;// компоненты вектора перемещений при действии нагружения 1 Y
+    xx[k1][2][1] = row.getFloat(10)*0.03f;// компоненты вектора перемещений при действии нагружения 1 Z
+
+    xx[k1][0][2] = row.getFloat(3)*0.03f;// компоненты вектора перемещений при действии нагружения 2 X
+    xx[k1][1][2] = row.getFloat(7)*0.03f;// компоненты вектора перемещений при действии нагружения 2 Y
+    xx[k1][2][2] = row.getFloat(11)*0.03f;// компоненты вектора перемещений при действии нагружения 2 Z
+
+    xx[k1][0][3] = row.getFloat(4)*0.03f;//
+    xx[k1][1][3] = row.getFloat(8)*0.03f;//
+    xx[k1][2][3] = row.getFloat(12)*0.03f;//
+
+    xd[k1][0][0] = row.getFloat(13)*0.002f;//
+    xd[k1][0][1] = row.getFloat(17)*0.002f;//
+    xd[k1][0][2] = row.getFloat(21)*0.002f;//
   }
   println(k1);
 }
@@ -156,10 +163,18 @@ public void draw() {
 
 
   if (wheel==1) {
-    coef=coef-0.02;
+    coef=coef-0.03;
+    if (coef<0)
+    {
+      coef=0;
+    }
   }
   if (wheel==-1) {
-    coef=coef+0.02;
+    coef=coef+0.03;
+    if (coef<0)
+    {
+      coef=0;
+    }
   }
 
   fill(255);
@@ -220,15 +235,16 @@ public void draw() {
 
   if (state_b1) {//режим отображения напряженного состояния
     for (int i = 0; i < k1; i++) {
-      if (mouseX<width*0.5) {
-        dx=xx[i][1][0]*Scd*(mouseX-displayWidth*0.25)/displayWidth+xx[i][1][1]*Scd*(mouseY-displayWidth*0.25)/displayWidth;
-        dy=xx[i][2][0]*Scd*(mouseX-displayWidth*0.25)/displayWidth+xx[i][2][1]*Scd*(mouseY-displayWidth*0.25)/displayWidth;
-        dz=xx[i][3][0]*Scd*(mouseX-displayWidth*0.25)/displayWidth+xx[i][3][1]*Scd*(mouseY-displayWidth*0.25)/displayWidth;
+
+      if (mouseX>displayWidth*4/16) {
+        dx=Scd*xx[i][0][1]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth)+Scd*xx[i][0][2]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight);
+        dy=Scd*xx[i][1][1]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth)+Scd*xx[i][1][2]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight);
+        dz=Scd*xx[i][2][1]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth)+Scd*xx[i][2][2]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight);
         //println(dx,dy,dz);
       }
-      stroke(100+dx*8, 100+dy*8, 100+dz*8, 50);
+      stroke(int(dx*255/15000), int(dy*255/15000), int(dz), 50);
       //println(dx,dy,dz);
-      point(constr[i][0][0]*coef, constr[i][0][1]*coef, constr[i][0][2]*coef);
+      point(constr[i][0][0], constr[i][0][1], constr[i][0][2]);
     }
   }
   //  if (state_b2) {
@@ -336,7 +352,12 @@ public void draw() {
   //    F[Fpr1][Fpr2]++;
   //  }
   //}
-  wheel=0;
+  println(mouseX, abs(mouseX-displayWidth*5/8), float(abs(mouseX-displayWidth*5/8)), float (displayWidth));
+  println();
+  println(float(abs(mouseX-displayWidth*5/8))/float (displayWidth));
+  println();
+  println(dx, dy, dz);
+    wheel=0;
 }
 
 
@@ -363,11 +384,16 @@ public void mouseWheel(MouseEvent event) {
   wheel=e;
 }
 
+//xx[i][0][0]+xd[i][0][0]*float(mouseX-width/2) ,xx[i][0][1]+xd[i][0][1]*float(mouseX-width/2) , xx[i][0][2]+xd[i][0][2]*float(mouseX-width/2)
+
+
 void requestData1() {
   for (int i = 0; i < n/4; i++) {
-    constr[i][0][0]=xx[i][0][0]+xd[i][0][0]*parseFloat(mouseX-width/2)*coef;
-    constr[i][0][1]=xx[i][0][1]+xd[i][0][1]*parseFloat(mouseX-width/2)*coef;
-    constr[i][0][2]=xx[i][0][2]+xd[i][0][2]*parseFloat(mouseX-width/2)*coef;
+    if (mouseX>displayWidth*4/16) {
+      constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*float(mouseX-displayWidth*5/8))*coef;
+      constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseX-displayWidth*5/8))*coef;
+      constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*float(mouseX-displayWidth*5/8))*coef;
+    }
   }
 }
 
