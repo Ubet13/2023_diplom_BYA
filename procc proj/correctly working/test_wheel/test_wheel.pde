@@ -23,6 +23,9 @@ int n=3000000;
 float [][][] xx = new float[n][5][4];
 float [][][] xd = new float[n][5][4];
 float [][][] xt = new float[n][5][4];
+float []tension_x =  new float[n];
+float []tension_y =  new float[n];
+
 //float [][][] xd = new float[n][5][4];
 int ee=0;
 int ee1;
@@ -44,7 +47,7 @@ float displayWidth_rect_1;
 float displayWidth_rect_2;
 float displayHeight_rect_1;
 float displayHeight_rect_2;
-float xc, yc, zc, dx, dy, dz, r1, r2, r3, xb1, xb2, xb3, yb1, yb2, yb3, rb, s, tension_x, tension_y;
+float xc, yc, zc, dx, dy, dz, r1, r2, r3, xb1, xb2, xb3, yb1, yb2, yb3, rb, s;
 
 
 
@@ -193,7 +196,7 @@ public void draw() {
   thread("requestData3");
 
   thread("requestData4");
-  
+
   thread("requestData5");
 
   //for (int i = 0; i < n; i++) {
@@ -247,22 +250,12 @@ public void draw() {
 
   if (state_b1) {//режим отображения напряженного состояния
     for (int i = 0; i < k1; i++) {
-
-
-        //tension_x=xt[i][0][0]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth);
-        //tension_y=xt[i][1][0]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight);
-        
-        
-        //dx=abs(Scd*xx[i][0][1]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth)+Scd*xx[i][0][2]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight));
-        //dy=abs(Scd*xx[i][1][1]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth)+Scd*xx[i][1][2]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight));
-        //dz=abs(Scd*xx[i][2][1]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth)+Scd*xx[i][2][2]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight));
-        //println(dx,dy,dz);
-      
-      stroke(int(tension_x*255/15000), 0, int(tension_y*255/15000), 100);
-      //println(dx,dy,dz);
+      stroke(int(tension_x[i])*50, 0, int(tension_y[i])*50, 100);
+      //println(tension_x[i]*50, 0, tension_y[i]*50);
       point(constr[i][0][0], constr[i][0][1], constr[i][0][2]);
     }
   }
+
   //  if (state_b2) {
   //    for (int i = 0; i < k2; i++) {
   //      if (mouseX<width*0.5) {
@@ -277,12 +270,13 @@ public void draw() {
   //  float s1, s2;
   //  float s1m=10;
   //  float s2m=20;
+  
+  
+  
+  
   //  if (state_b3) {
   //    for (int i = 0; i < k2; i++) {
-
-
   //      if (state_C) {
-
   //        s1=xd[i][4]*Scd*abs(max1)/width+xd[i][5]*Scd*abs(max2)/width;
   //        s2=xd[i][4]*Scd*abs(min1)/width+xd[i][5]*Scd*abs(min2)/width;
 
@@ -441,10 +435,10 @@ void requestData4() {
 }
 
 void requestData5() {
-  for (int i = n*3/4; i < n; i++) {
+  for (int i = 0; i < n; i++) {
     if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-        tension_x=xt[i][0][0]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth);
-        tension_y=xt[i][1][0]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight);
+      tension_x[i]=xt[i][0][0]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth);
+      tension_y[i]=xt[i][1][0]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight);
     }
   }
 }
