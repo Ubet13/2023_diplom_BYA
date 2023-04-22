@@ -10,9 +10,9 @@ import g4p_controls.*;
 
 
 
-GButton btnMakeWindow;
-
-
+GButton btnMOVE;
+GButton btnTENS;
+GButton btnHP;
 
 
 
@@ -130,7 +130,15 @@ public void setup() {
   surface.setResizable(true);
   surface.setLocation(100, 100);
   coef=1;
-  btnMakeWindow = new GButton(this, 10, 20, 140, 20, "Make Window");
+
+  //btnMOVE.fireAllEvents(true);
+  //btnTENS.fireAllEvents(true);
+  //btnHP.fireAllEvents(true);
+
+
+  btnMOVE = new GButton(this, 10, 20, 140, 40, "Режим отображения перемещений");
+  btnTENS = new GButton(this, 10, 200, 140, 40, "Режим отображения напряжений");
+  btnHP = new GButton(this, 10, 400, 140, 40, "Режим отображения запаса хп");
   lin = loadImage("lin2.png");
   cur = loadImage("cur.png");
   cir = loadImage("s2.png");
@@ -203,7 +211,7 @@ public void draw() {
   thread("requestData5");
 
   thread("requestData6");
-  
+
   thread("requestData7");
 
   //for (int i = 0; i < n; i++) {
@@ -221,9 +229,7 @@ public void draw() {
   //   }w
 
 
-  state_b1=false;
-  state_b2=false;
-  state_b3=true;
+
 
 
   //r1=sqrt(sq(mouseX-xb1)+sq(mouseY-yb1));
@@ -276,108 +282,11 @@ public void draw() {
   if (state_b3) {//режим отображения запаса хп
     for (int i = 0; i < k1; i++) {
       stroke(255*( (hp[i][0][0]+hp[i][1][0])/max_hp), 0, 0);
-      println(hp[i][0][0], 0, hp[i][1][0]);
+      //println(hp[i][0][0], 0, hp[i][1][0]);
       point(xx[i][0][0], xx[i][1][0], xx[i][2][0]);
     }
   }
 
-  //if (state_b3) {//режим отображения запаса хп
-  //  for (int i = 0; i < k1; i++) {
-  //    if (state_C) {
-  //      s1=xd[i][4]*Scd*abs(max1)/width+xd[i][5]*Scd*abs(max2)/width;
-  //      s2=xd[i][4]*Scd*abs(min1)/width+xd[i][5]*Scd*abs(min2)/width;
-
-  //      s=(s1-s2)+(s1+s2)*0.5*0.06;
-  //      //   println(s);
-  //      if (s<s1m) {
-  //        xd[i][6]++;
-  //      } else {
-
-  //        if (s<s2m) {
-  //          xd[i][7]++;
-  //        } else {
-  //          xd[i][8]++;
-  //        }
-  //      }
-  //    }
-
-  //    if (mouseX<width*0.5) {
-
-  //      s=xd[i][4]*Scd*abs(mouseX-width*0.25)/width+xd[i][5]*Scd*abs(mouseY-width*0.25)/width;
-  //      //  println(s);
-  //    }
-  //    stroke(xd[i][6]*10, xd[i][7]*10, xd[i][8]*10, 50);
-  //    point(xd[i][1]*Sc, xd[i][2]*Sc, xd[i][3]*Sc*0.3);
-  //  }
-  //}
-
-  //xg[0][0]=(mouseX-width*0.25);
-  //xg[0][1]=(mouseY-width*0.25);
-
-
-  //max1=-1e6;
-  //max2=-1e6;
-
-  //min1=1e6;
-  //min2=1e6;
-
-
-  //for (int i=1; i<n2/10; i++) {
-
-  //  if (xg[i][0]>max1) {
-  //    max1=xg[i][0];
-  //    imax1=i;
-  //  }
-
-  //  if (xg[i][1]>max2) {
-  //    max2=xg[i][1];
-  //    imax2=i;
-  //  }
-
-  //  if (xg[i][0]<min1) {
-  //    min1=xg[i][0];
-  //  }
-  //  if (xg[i][1]<min2) {
-  //    min2=xg[i][1];
-  //  }
-  //}
-  //state_C=false;
-  //if (imax1==floor(n2/20)) {
-  //  state_C=true;
-  //  Fpr1=int(max1-min1)*2*nF/width;
-  //  Fpr2=int(max2-min2)*2*nF/width;
-
-
-  //  if (Fpr1>(nF-1)) {
-  //    Fpr1=nF-1;
-  //  }
-  //  if (Fpr2>(nF-1)) {
-  //    Fpr2=nF-1;
-  //  }
-  //  F[Fpr1][Fpr2]++;
-  //}
-  //if (imax2==floor(n2/20)) {
-  //  state_C=true;
-  //  Fpr1=int(max1-min1)*2*nF/width;
-  //  Fpr2=int(max2-min2)*2*nF/width;
-  //  if (Fpr1>(nF-1)) {
-  //    Fpr1=nF-1;
-  //  }
-  //  if (Fpr2>(nF-1)) {
-  //    Fpr2=nF-1;
-  //  }
-  //  F[Fpr1][Fpr2]++;
-  //}
-
-
-
-
-  //println(mouseX, abs(mouseX-displayWidth*5/8), float(abs(mouseX-displayWidth*5/8)), float (displayWidth));
-  //println();
-  //println(float(abs(mouseX-displayWidth*5/8))/float (displayWidth));
-  //println();
-  //println(int(dx*220/15000), int(dy*220/15000), int(dz*2));
-  //println(mouseX,mouseY);
 
 
   wheel=0;
@@ -479,9 +388,31 @@ void requestData7() {
   if (state_b3) {
     for (int i = 0; i < n; i++) {
       if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-        hp[i][0][0]=hp[i][0][0]*10+xt[i][0][0]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth);
-        hp[i][1][0]=hp[i][1][0]*10+xt[i][1][0]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight);
+        hp[i][0][0]=hp[i][0][0]+xt[i][0][0]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth);
+        hp[i][1][0]=hp[i][1][0]+xt[i][1][0]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight);
       }
     }
+  }
+}
+
+public void handleButtonEvents(GButton button, GEvent event) {
+  if (button == btnMOVE && event == GEvent.CLICKED) {
+    state_b1=true;
+    state_b2=false;
+    state_b3=false;
+
+    println("Button 'btnMOVE' was clicked");
+  }
+  if (button == btnTENS && event == GEvent.CLICKED) {
+    state_b1=false;
+    state_b2=true;
+    state_b3=false;
+    println("Button 'btnTENS' was clicked");
+  }
+  if (button == btnHP && event == GEvent.CLICKED) {
+    state_b1=false;
+    state_b2=false;
+    state_b3=true;
+    println("Button 'btnHP' was clicked");
   }
 }
