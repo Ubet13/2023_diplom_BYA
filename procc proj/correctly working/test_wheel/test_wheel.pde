@@ -13,7 +13,11 @@ import g4p_controls.*;
 GButton btnMOVE;
 GButton btnTENS;
 GButton btnHP;
-
+GButton btnCOEF1;
+GCustomSlider sldrX;
+GCustomSlider sldrY;
+GTextBase nmb_X;
+GTextBase nmb_Y;
 
 
 float  wheel;
@@ -64,7 +68,7 @@ float   min2=0;
 
 float Scd=200;
 boolean state_C=false;
-boolean state_b1=true;
+boolean state_b1=false;
 boolean state_b2=false;
 boolean state_b3=false;
 int imax1=0;
@@ -130,15 +134,14 @@ public void setup() {
   surface.setResizable(true);
   surface.setLocation(100, 100);
   coef=1;
-
-  //btnMOVE.fireAllEvents(true);
-  //btnTENS.fireAllEvents(true);
-  //btnHP.fireAllEvents(true);
-
-
-  btnMOVE = new GButton(this, 10, 20, 140, 40, "Режим отображения перемещений");
-  btnTENS = new GButton(this, 10, 200, 140, 40, "Режим отображения напряжений");
-  btnHP = new GButton(this, 10, 400, 140, 40, "Режим отображения запаса хп");
+  nmb_X=new GTextField (this, 40, 800, 200, 60);
+  nmb_Y=new GTextField (this, 40, 1000, 200, 60);
+  sldrX = new GCustomSlider(this, 40, 300, 200, 60, null);
+  sldrY = new GCustomSlider(this,40, 500, 200, 60, null);
+  btnMOVE = new GButton(this, 510, 20, 140, 40, "Режим отображения перемещений");
+  btnTENS = new GButton(this, 810, 20, 140, 40, "Режим отображения напряжений");
+  btnHP = new GButton(this, 1110, 20, 140, 40, "Режим отображения запаса хп");
+  btnCOEF1 = new GButton(this, 1410, 20, 140, 40, "Вернуть нужный размер конструкции");
   lin = loadImage("lin2.png");
   cur = loadImage("cur.png");
   cir = loadImage("s2.png");
@@ -163,24 +166,15 @@ public void setup() {
 public void draw() {
 
   background(100, 100, 100);
-  //background(0, 0, 0);
 
   rect(0, 0, displayWidth_rect_1, displayHeight_rect_1);
   fill(255);
   rect(0, 0, displayWidth_rect_2, displayHeight_rect_2);
   fill(255);
 
-
-
   translate(width*5/8, height*0.85);
   rotateX(PI/2);
   rotateZ(PI/4);
-
-
-  //rectMode(CENTER);
-  //fill(125);
-  //rect(0, 0, displayWidth*10, displayWidth);
-
 
   if (wheel==1) {
     coef=coef-0.03;
@@ -188,12 +182,20 @@ public void draw() {
     {
       coef=0;
     }
+    if (coef>1.1)
+    {
+      coef=1.15;
+    }
   }
   if (wheel==-1) {
     coef=coef+0.03;
     if (coef<0)
     {
       coef=0;
+    }
+    if (coef>1.1)
+    {
+      coef=1.1;
     }
   }
 
@@ -214,101 +216,38 @@ public void draw() {
 
   thread("requestData7");
 
-  //for (int i = 0; i < n; i++) {
-  //  point(constr[i][0][0]*coef, constr[i][0][1]*coef, constr[i][0][2]*coef);
-  //}
-
-
-
-
-  //  thread("requestData2");
-  //thread("requestData3");
-  //void requestData1() {
-  //   for (int i = 0; i < n; i++) {
-  //     point((xx[i][0][0]+xd[i][0][0]*parseFloat(mouseX-width/2))*coef, (xx[i][0][1]+xd[i][0][1]*parseFloat(mouseX-width/2))*coef, (xx[i][0][2]+xd[i][0][2]*parseFloat(mouseX-width/2))*coef);
-  //   }w
-
-
-
-
-
-  //r1=sqrt(sq(mouseX-xb1)+sq(mouseY-yb1));
-  //r2=sqrt(sq(mouseX-xb2)+sq(mouseY-yb2));
-  //r3=sqrt(sq(mouseX-xb3)+sq(mouseY-yb3));
-
-
-  //if (mousePressed&&(r1<rb)) {
-  //  state_b1=true;
-  //  state_b2=false;
-  //  state_b3=false;
-  //} else {
-  //  //    state_b1=false;
-  //}
-  //if (mousePressed&&(r2<rb)) {
-  //  state_b2=true;
-  //  state_b1=false;
-  //  state_b3=false;
-  //} else {
-  //  //   state_b2=false;
-  //}
-
-  //if (mousePressed&&(r3<rb)) {
-  //  state_b3=true;
-  //  state_b2=false;
-  //  state_b1=false;
-  //} else {
-  //  //    state_b3=false;
-  //}
-
-
   if (state_b1) {//режим отображения перемещений
     for (int i = 0; i < k1; i++) {
-      stroke(int(tension_x[i])*50, 0, int(tension_y[i])*50, 100);
-      //println(tension_x[i]*50, 0, tension_y[i]*50);
-      point(constr[i][0][0], constr[i][0][1], constr[i][0][2]);
+      //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2 ) {
+        stroke(int(tension_x[i])*50, 0, int(tension_y[i])*50, 100);
+        //println(tension_x[i]*50, 0, tension_y[i]*50);
+        point(constr[i][0][0], constr[i][0][1], constr[i][0][2]);
+     // }
     }
   }
 
   if (state_b2) {//режим отображения напряжений
     for (int i = 0; i < k1; i++) {
-      stroke(s, xt[i][0][0]*40*abs(mouseX-displayWidth*5/8)/displayWidth, xt[i][0][0]*40*abs(mouseY-displayHeight*1/2)/displayHeight);
-
-      //stroke(255,255,255);
-      point(xx[i][0][0], xx[i][1][0], xx[i][2][0]);
-      //println(s, xt[i][0][0]*40*abs(mouseX-displayWidth*5/8)/displayWidth, xt[i][0][0]*40*abs(mouseY-displayHeight*1/2)/displayHeight);
+      //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2 ) {
+        stroke(s, xt[i][0][0]*40*abs(mouseX-displayWidth*5/8)/displayWidth, xt[i][0][0]*40*abs(mouseY-displayHeight*1/2)/displayHeight);
+        //stroke(255,255,255);
+        point(xx[i][0][0]*coef, xx[i][1][0]*coef, xx[i][2][0]*coef);
+        //println(s, xt[i][0][0]*40*abs(mouseX-displayWidth*5/8)/displayWidth, xt[i][0][0]*40*abs(mouseY-displayHeight*1/2)/displayHeight);
+      //}
     }
   }
 
   if (state_b3) {//режим отображения запаса хп
     for (int i = 0; i < k1; i++) {
-      stroke(255*( (hp[i][0][0]+hp[i][1][0])/max_hp), 0, 0);
-      //println(hp[i][0][0], 0, hp[i][1][0]);
-      point(xx[i][0][0], xx[i][1][0], xx[i][2][0]);
+      //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2 ) {
+        stroke(255*( (hp[i][0][0]+hp[i][1][0])/max_hp), 0, 0);
+        //println(hp[i][0][0], 0, hp[i][1][0]);
+        point(xx[i][0][0]*coef, xx[i][1][0]*coef, xx[i][2][0]*coef);
+     // }
     }
   }
-
-
-
   wheel=0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 public void mouseWheel(MouseEvent event) {
   float e = event.getCount();
@@ -321,7 +260,7 @@ void requestData1() {
     for (int i = 0; i < n/4; i++) {
       if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
         constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*float(mouseX-displayWidth*5/8))*coef;
-        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseX-displayWidth*5/8))*coef;
+        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseY-displayHeight*1/2))*coef;
         constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*float(mouseX-displayWidth*5/8))*coef;
       }
     }
@@ -333,7 +272,7 @@ void requestData2() {
 
       if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
         constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*float(mouseX-displayWidth*5/8))*coef;
-        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseX-displayWidth*5/8))*coef;
+        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseY-displayHeight*1/2))*coef;
         constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*float(mouseX-displayWidth*5/8))*coef;
       }
     }
@@ -344,7 +283,7 @@ void requestData3() {
     for (int i = n/2; i < n*3/4; i++) {
       if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
         constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*float(mouseX-displayWidth*5/8))*coef;
-        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseX-displayWidth*5/8))*coef;
+        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseY-displayHeight*1/2))*coef;
         constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*float(mouseX-displayWidth*5/8))*coef;
       }
     }
@@ -355,7 +294,7 @@ void requestData4() {
     for (int i = n*3/4; i < n; i++) {
       if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
         constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*float(mouseX-displayWidth*5/8))*coef;
-        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseX-displayWidth*5/8))*coef;
+        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseY-displayHeight*1/2))*coef;
         constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*float(mouseX-displayWidth*5/8))*coef;
       }
     }
@@ -372,9 +311,6 @@ void requestData5() {
     }
   }
 }
-
-
-
 void requestData6() {
   if (state_b2) {
     for (int i = 0; i < n; i++) {
@@ -394,25 +330,27 @@ void requestData7() {
     }
   }
 }
-
 public void handleButtonEvents(GButton button, GEvent event) {
   if (button == btnMOVE && event == GEvent.CLICKED) {
     state_b1=true;
     state_b2=false;
     state_b3=false;
-
-    println("Button 'btnMOVE' was clicked");
+    //println("Button 'btnMOVE' was clicked");
   }
   if (button == btnTENS && event == GEvent.CLICKED) {
     state_b1=false;
     state_b2=true;
     state_b3=false;
-    println("Button 'btnTENS' was clicked");
+    //println("Button 'btnTENS' was clicked");
   }
   if (button == btnHP && event == GEvent.CLICKED) {
     state_b1=false;
     state_b2=false;
     state_b3=true;
-    println("Button 'btnHP' was clicked");
+    //println("Button 'btnHP' was clicked");
+  }
+  if (button == btnCOEF1 && event == GEvent.CLICKED) {
+    coef=1.0;
+    //println("Button 'btnHP' was clicked");
   }
 }
