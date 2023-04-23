@@ -19,7 +19,7 @@ GCustomSlider sldrY;
 GTextBase nmb_X;
 GTextBase nmb_Y;
 
-
+float X_float, Y_float;
 float  wheel;
 PVector Pos_of_main;
 Table table, tableE;
@@ -41,11 +41,6 @@ int n2=100;
 int nF=100;
 int [][] F = new int[nF][nF];
 
-//float   min1=0;
-//float   min2=0;
-//float Sc=0.8;
-//float max1=0;
-//float max2=0;
 float [][] xg = new float[n2+10][6];
 float e, coef;
 float [][][] constr=new float[n][5][4];
@@ -120,12 +115,10 @@ void settings() {
   for (TableRow rowE : tableE.rows()) {  // загрузка координат в массив
     ee = rowE.getInt(0);
     xt[k3][0][0] =rowE.getFloat(11);// Von-mises X
-    // println(xt[k1][0][0]);
+
     xt[k3][1][0] = xt[k3][0][0];// Von-mises Y
     k3=k3+1;
   }
-
-  //println(k1);
 }
 
 
@@ -137,11 +130,11 @@ public void setup() {
   nmb_X=new GTextField (this, 40, 800, 200, 60);
   nmb_Y=new GTextField (this, 40, 1000, 200, 60);
   sldrX = new GCustomSlider(this, 40, 300, 200, 60, null);
-  sldrY = new GCustomSlider(this,40, 500, 200, 60, null);
+  sldrY = new GCustomSlider(this, 40, 500, 200, 60, null);
   btnMOVE = new GButton(this, 510, 20, 140, 40, "Режим отображения перемещений");
   btnTENS = new GButton(this, 810, 20, 140, 40, "Режим отображения напряжений");
   btnHP = new GButton(this, 1110, 20, 140, 40, "Режим отображения запаса хп");
-  btnCOEF1 = new GButton(this, 1410, 20, 140, 40, "Вернуть нужный размер конструкции");
+  btnCOEF1 = new GButton(this, 1410, 20, 140, 40, "Вернуть исходный размер конструкции");
   lin = loadImage("lin2.png");
   cur = loadImage("cur.png");
   cir = loadImage("s2.png");
@@ -150,8 +143,6 @@ public void setup() {
   back = loadImage("back2.png");
   back.resize(int(displayWidth_rect_2), int(displayHeight_rect_1));
 
-  //imageMode(CENTER);
-  //rectMode(CENTER);
   xb1=displayWidth*0.7;
   yb1=displayHeight*0.15;
   xb2=displayWidth*0.8;
@@ -218,32 +209,22 @@ public void draw() {
 
   if (state_b1) {//режим отображения перемещений
     for (int i = 0; i < k1; i++) {
-      //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2 ) {
-        stroke(int(tension_x[i])*50, 0, int(tension_y[i])*50, 100);
-        //println(tension_x[i]*50, 0, tension_y[i]*50);
-        point(constr[i][0][0], constr[i][0][1], constr[i][0][2]);
-     // }
+      stroke(int(tension_x[i])*50, 0, int(tension_y[i])*50, 100);
+      point(constr[i][0][0], constr[i][0][1], constr[i][0][2]);
     }
   }
 
   if (state_b2) {//режим отображения напряжений
     for (int i = 0; i < k1; i++) {
-      //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2 ) {
-        stroke(s, xt[i][0][0]*40*abs(mouseX-displayWidth*5/8)/displayWidth, xt[i][0][0]*40*abs(mouseY-displayHeight*1/2)/displayHeight);
-        //stroke(255,255,255);
-        point(xx[i][0][0]*coef, xx[i][1][0]*coef, xx[i][2][0]*coef);
-        //println(s, xt[i][0][0]*40*abs(mouseX-displayWidth*5/8)/displayWidth, xt[i][0][0]*40*abs(mouseY-displayHeight*1/2)/displayHeight);
-      //}
+      stroke(s, xt[i][0][0]*40*abs(mouseX-displayWidth*5/8)/displayWidth, xt[i][0][0]*40*abs(mouseY-displayHeight*1/2)/displayHeight);
+      point(xx[i][0][0]*coef, xx[i][1][0]*coef, xx[i][2][0]*coef);
     }
   }
 
   if (state_b3) {//режим отображения запаса хп
     for (int i = 0; i < k1; i++) {
-      //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2 ) {
-        stroke(255*( (hp[i][0][0]+hp[i][1][0])/max_hp), 0, 0);
-        //println(hp[i][0][0], 0, hp[i][1][0]);
-        point(xx[i][0][0]*coef, xx[i][1][0]*coef, xx[i][2][0]*coef);
-     // }
+      stroke(255*( (hp[i][0][0]+hp[i][1][0])/max_hp), 0, 0);
+      point(xx[i][0][0]*coef, xx[i][1][0]*coef, xx[i][2][0]*coef);
     }
   }
   wheel=0;
@@ -258,11 +239,11 @@ public void mouseWheel(MouseEvent event) {
 void requestData1() {
   if (state_b1) {
     for (int i = 0; i < n/4; i++) {
-      if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-        constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*float(mouseX-displayWidth*5/8))*coef;
-        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseY-displayHeight*1/2))*coef;
-        constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*float(mouseX-displayWidth*5/8))*coef;
-      }
+      //  if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
+      constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*(X_float-0.5)*500)*coef;
+      constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*(Y_float-0.5)*500)*coef;
+      constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*(Y_float-0.5)*500)*coef;
+      //  }
     }
   }
 }
@@ -270,33 +251,33 @@ void requestData2() {
   if (state_b1) {
     for (int i = n/4; i < n/2; i++) {
 
-      if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-        constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*float(mouseX-displayWidth*5/8))*coef;
-        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseY-displayHeight*1/2))*coef;
-        constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*float(mouseX-displayWidth*5/8))*coef;
-      }
+      // if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
+      constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*(X_float-0.5)*500)*coef;
+      constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*(Y_float-0.5)*500)*coef;
+      constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*(Y_float-0.5)*500)*coef;
+      // }
     }
   }
 }
 void requestData3() {
   if (state_b1) {
     for (int i = n/2; i < n*3/4; i++) {
-      if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-        constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*float(mouseX-displayWidth*5/8))*coef;
-        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseY-displayHeight*1/2))*coef;
-        constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*float(mouseX-displayWidth*5/8))*coef;
-      }
+      // if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
+      constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*(X_float-0.5)*500)*coef;
+      constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*(Y_float-0.5)*500)*coef;
+      constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*(Y_float-0.5)*500)*coef;
+      // }
     }
   }
 }
 void requestData4() {
   if (state_b1) {
     for (int i = n*3/4; i < n; i++) {
-      if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-        constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*float(mouseX-displayWidth*5/8))*coef;
-        constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*float(mouseY-displayHeight*1/2))*coef;
-        constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*float(mouseX-displayWidth*5/8))*coef;
-      }
+      // if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
+      constr[i][0][0]=(xx[i][0][0]+xd[i][0][0]*(X_float-0.5)*500)*coef;
+      constr[i][0][1]=(xx[i][1][0]+xd[i][0][1]*(Y_float-0.5)*500)*coef;
+      constr[i][0][2]=(xx[i][2][0]+xd[i][0][2]*(Y_float-0.5)*500)*coef;
+      //}
     }
   }
 }
@@ -304,29 +285,29 @@ void requestData4() {
 void requestData5() {
   if (state_b1) {
     for (int i = 0; i < n; i++) {
-      if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-        tension_x[i]=xt[i][0][0]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth);
-        tension_y[i]=xt[i][1][0]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight);
-      }
+      //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
+      tension_x[i]=xt[i][0][0]*abs(X_float-0.5)*2;
+      tension_y[i]=xt[i][1][0]*abs(Y_float-0.5)*2;
+      //}
     }
   }
 }
 void requestData6() {
   if (state_b2) {
     for (int i = 0; i < n; i++) {
-      if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-        s=xt[i][0][0]*abs(mouseX-displayWidth*5/8)/displayWidth+xt[i][1][0]*abs(mouseY-displayHeight*1/2)/displayHeight;
-      }
+      //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
+      s=xt[i][0][0]*X_float+xt[i][1][0]*Y_float;
+      // }
     }
   }
 }
 void requestData7() {
   if (state_b3) {
     for (int i = 0; i < n; i++) {
-      if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-        hp[i][0][0]=hp[i][0][0]+xt[i][0][0]*float(abs(mouseX-displayWidth*5/8))/float(displayWidth);
-        hp[i][1][0]=hp[i][1][0]+xt[i][1][0]*float(abs(mouseY-displayHeight*4/8))/float(displayHeight);
-      }
+      //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
+      hp[i][0][0]=hp[i][0][0]+xt[i][0][0]*X_float;
+      hp[i][1][0]=hp[i][1][0]+xt[i][1][0]*Y_float;
+      // }
     }
   }
 }
@@ -353,4 +334,17 @@ public void handleButtonEvents(GButton button, GEvent event) {
     coef=1.0;
     //println("Button 'btnHP' was clicked");
   }
+}
+
+public void handleSliderEvents(GValueControl slider, GEvent event) {
+  // println("Slider Value " + sldrX.getValueI());
+  println( sldrX.getValueF());
+  X_float = sldrX.getValueF();
+  // println("Slider Value " + sldrY.getValueI());
+  println( sldrY.getValueF());
+  Y_float = sldrY.getValueF();
+}
+public void handleTextEvents(GEditableTextControl textcontrol, GEvent event)
+{
+  println("Button 'btnHP' was clicked");
 }
