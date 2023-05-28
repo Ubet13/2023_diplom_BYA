@@ -169,8 +169,8 @@ public void draw() {
   text("Отображения напряжений", 780, displayHeight_rect_2/2+20);
   text("Отображения запаса прочности", 1060, displayHeight_rect_2/2+20);
   text("Вернуть исходный размер конструкции", 1400, displayHeight_rect_2/2+20);
-  text("Состовляющая по оси Х="+(X_float-0.5)*2, 10, height*3/8-20);
-  text("Состовляющая по оси Y="+(Y_float-0.5)*2, 10, height*5/8-20);
+  text("Составляющая по оси Х="+(X_float-0.5)*2, 10, height*3/8-20);
+  text("Составляющая по оси Y="+(Y_float-0.5)*2, 10, height*5/8-20);
 
   translate(width*5/8, height*0.85);
   rotateX(PI/2);
