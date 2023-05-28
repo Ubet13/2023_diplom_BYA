@@ -134,7 +134,7 @@ public void setup() {
   btnMOVE = new GButton(this, 530, 20, 140, 40, " ");
   btnTENS = new GButton(this, 830, 20, 140, 40, " ");
   btnHP = new GButton(this, 1110, 20, 140, 40, " ");
-  btnCOEF1 = new GButton(this, 1410, 20, 140, 40, " ");
+  btnCOEF1 = new GButton(this, 1460, 20, 140, 40, " ");
   lin = loadImage("lin2.png");
   cur = loadImage("cur.png");
   cir = loadImage("s2.png");
