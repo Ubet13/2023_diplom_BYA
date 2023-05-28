@@ -131,10 +131,10 @@ public void setup() {
   nmb_Y=new GTextField (this, 40, 1000, 200, 60);
   sldrX = new GCustomSlider(this, 40, 300, 200, 60, null);
   sldrY = new GCustomSlider(this, 40, 500, 200, 60, null);
-  btnMOVE = new GButton(this, 510, 20, 140, 40, "Режим отображения перемещений");
-  btnTENS = new GButton(this, 810, 20, 140, 40, "Режим отображения напряжений");
-  btnHP = new GButton(this, 1110, 20, 140, 40, "Режим отображения запаса хп");
-  btnCOEF1 = new GButton(this, 1410, 20, 140, 40, "Вернуть исходный размер конструкции");
+  btnMOVE = new GButton(this, 530, 20, 140, 40, " ");
+  btnTENS = new GButton(this, 830, 20, 140, 40, " ");
+  btnHP = new GButton(this, 1110, 20, 140, 40, " ");
+  btnCOEF1 = new GButton(this, 1410, 20, 140, 40, " ");
   lin = loadImage("lin2.png");
   cur = loadImage("cur.png");
   cir = loadImage("s2.png");
@@ -162,6 +162,15 @@ public void draw() {
   fill(255);
   rect(0, 0, displayWidth_rect_2, displayHeight_rect_2);
   fill(255);
+  
+  textSize(20);
+  fill(0, 0, 0);
+  text("Отображения перемещений", 490, displayHeight_rect_2/2+20);
+  text("Отображения напряжений", 780, displayHeight_rect_2/2+20);
+  text("Отображения запаса прочности", 1060, displayHeight_rect_2/2+20);
+  text("Вернуть исходный размер конструкции", 1400, displayHeight_rect_2/2+20);
+  text("Состовляющая по оси Х="+(X_float-0.5)*2, 10, height*3/8-20);
+  text("Состовляющая по оси Y="+(Y_float-0.5)*2, 10, height*5/8-20);
 
   translate(width*5/8, height*0.85);
   rotateX(PI/2);
@@ -216,7 +225,7 @@ public void draw() {
 
   if (state_b2) {//режим отображения напряжений
     for (int i = 0; i < k1; i++) {
-      stroke(s, xt[i][0][0]*40*abs(mouseX-displayWidth*5/8)/displayWidth, xt[i][0][0]*40*abs(mouseY-displayHeight*1/2)/displayHeight);
+      stroke(s, xt[i][0][0]*40*abs(X_float-0.5)*2, xt[i][0][0]*40*abs(Y_float-0.5)*2);
       point(xx[i][0][0]*coef, xx[i][1][0]*coef, xx[i][2][0]*coef);
     }
   }
@@ -296,7 +305,7 @@ void requestData6() {
   if (state_b2) {
     for (int i = 0; i < n; i++) {
       //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-      s=xt[i][0][0]*X_float+xt[i][1][0]*Y_float;
+      s=xt[i][0][0]*abs(X_float-0.5)*2+xt[i][1][0]*abs(Y_float-0.5)*2;
       // }
     }
   }
@@ -305,8 +314,8 @@ void requestData7() {
   if (state_b3) {
     for (int i = 0; i < n; i++) {
       //if (mouseX>displayWidth_rect_1 && mouseY>displayHeight_rect_2) {
-      hp[i][0][0]=hp[i][0][0]+xt[i][0][0]*X_float;
-      hp[i][1][0]=hp[i][1][0]+xt[i][1][0]*Y_float;
+      hp[i][0][0]=hp[i][0][0]+xt[i][0][0]*abs(X_float-0.5)*2;
+      hp[i][1][0]=hp[i][1][0]+xt[i][1][0]*abs(Y_float-0.5)*2;
       // }
     }
   }
